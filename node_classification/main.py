@@ -154,7 +154,7 @@ class Exp:
         log('Model Saved: %s' % args.save_path)
 
     def load_model(self):
-        ckp = t.load('../Models/' + args.load_model + '.mod')
+        ckp = t.load('../Models/' + args.load_model + '.mod', map_location='cpu')
         self.model = ckp['model'].to(args.devices[1])
         self.opt = t.optim.Adam(self.model.parameters(), lr=args.lr, weight_decay=0)
 
@@ -163,12 +163,16 @@ class Exp:
         log('Model Loaded')
 
 if __name__ == '__main__':
-    os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
-    if len(args.gpu.split(',')) > 1:
-        args.devices = ['cuda:0', 'cuda:1']
+    if args.gpu is not None:
+        os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
+        if len(args.gpu.split(',')) > 1:
+            args.devices = ['cuda:0', 'cuda:1']
+        else:
+            args.devices = ['cuda:0', 'cuda:0']
+        args.devices = list(map(lambda x: t.device(x), args.devices))
     else:
-        args.devices = ['cuda:0', 'cuda:0']
-    args.devices = list(map(lambda x: t.device(x), args.devices))
+        args.devices = ['cpu', 'cpu']
+
     logger.saveDefault = True
     setproctitle.setproctitle('OpenGraph')
 

@@ -6,7 +6,7 @@ import scipy.sparse as sp
 from Utils.TimeLogger import log
 import torch as t
 import torch.utils.data as data
-import torch_geometric.transforms as T
+# import torch_geometric.transforms as T
 from model import InitialProjector
 import os
 
